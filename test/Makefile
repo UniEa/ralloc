@@ -1,5 +1,6 @@
 SRC = ../src
 CXX = g++
+CC = gcc
 
 WARNING_FLAGS:=-ftrapv -Wreturn-type -W -Wall \
 -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-parameter
@@ -52,7 +53,7 @@ sh6bench_test: ./benchmark/sh6bench.cpp librpmalloc.a
 	$(CXX) -I $(SRC) -I ./benchmark -o $@ $< $(CXXFLAGS) $(LIBS) -L. -lrpmalloc
 
 larson_test: ./benchmark/larson.cpp librpmalloc.a
-	$(CXX) -I $(SRC) -I ./benchmark -o $@ $< $(CXXFLAGS) $(LIBS) -L. -lrpmalloc
+	$(CC) -I $(SRC) -I ./benchmark -o $@ $< $(CXXFLAGS) $(LIBS) -L. -lrpmalloc
 
 # Active false sharing
 cache-thrash_test: ./benchmark/cache-thrash.cpp librpmalloc.a

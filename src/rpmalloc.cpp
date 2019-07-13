@@ -25,6 +25,7 @@
 
 #include "RegionManager.hpp"
 #include "pm_config.hpp"
+#include "BaseMeta.hpp"
 
 using namespace std;
 
@@ -89,14 +90,14 @@ void RP_close(){
 
 void* RP_malloc(size_t sz){
 	if(UNLIKELY(initialized==false)){
-		RP_init("no_explicit_init");
+		RP_init("no_explicit_init",  16*1024*1024*1024ULL);
 	}
 	return base_md->do_malloc(sz);
 }
 
 void RP_free(void* ptr){
 	if(UNLIKELY(initialized==false)){
-		RP_init("no_explicit_init");
+		RP_init("no_explicit_init", 16*1024*1024*1024ULL);
 	}
 	base_md->do_free(ptr);
 }
@@ -106,7 +107,7 @@ void* RP_set_root_c(void* ptr, uint64_t i){
 }
 void* RP_get_root(uint64_t i){
 	if(UNLIKELY(initialized==false)){
-		RP_init("no_explicit_init");
+		RP_init("no_explicit_init", 16*1024*1024*1024ULL);
 	}
 	return base_md->get_root(i);
 }

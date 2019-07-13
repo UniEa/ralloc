@@ -280,7 +280,7 @@ int main (int argc, char *argv[])
   lran2_init(&rgen, seed) ;
   // init_space = CountReservedSpace() ;
 #ifdef PMMALLOC
-  RP_init("test");//additional 1 for main thread
+  RP_init("test", 16*1024*1024*1024ULL);//additional 1 for main thread
   // tid = thread_count.fetch_add(1);
 #elif defined (MAKALU)
   __map_persistent_region();
@@ -487,7 +487,6 @@ static void * exercise_heap( void *pinput)
   long          blk_size ;
   int           range ;
 
-restart:
   if( stopflag ) return 0;
 
   pdea = (thread_data *)pinput ;
