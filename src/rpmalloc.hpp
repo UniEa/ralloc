@@ -27,7 +27,7 @@ extern "C"{
 
 /* return 1 if it's a restart, otherwise 0. */
 void* RP_set_root_c(void* ptr, uint64_t i);
-int RP_init(const char* _id, uint64_t size);
+int RP_init(const char* _id);
 void RP_close();
 void* RP_malloc(size_t sz);
 void RP_free(void* ptr);

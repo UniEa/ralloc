@@ -45,7 +45,8 @@ extern void public_flush_cache();
  * if such a heap doesn't exist, create one. aka start.
  * id is the distinguishable identity of applications.
  */
-int RP_init(const char* _id, uint64_t size){
+int RP_init(const char* _id){
+	uint64_t size = 16*1024*1024*1024ULL;
 	string id(_id);
 	// thread_num = thd_num;
 	filepath = HEAPFILE_PREFIX + id;
@@ -90,14 +91,14 @@ void RP_close(){
 
 void* RP_malloc(size_t sz){
 	if(UNLIKELY(initialized==false)){
-		RP_init("no_explicit_init",  16*1024*1024*1024ULL);
+		RP_init("no_explicit_init");
 	}
 	return base_md->do_malloc(sz);
 }
 
 void RP_free(void* ptr){
 	if(UNLIKELY(initialized==false)){
-		RP_init("no_explicit_init", 16*1024*1024*1024ULL);
+		RP_init("no_explicit_init");
 	}
 	base_md->do_free(ptr);
 }
@@ -107,7 +108,7 @@ void* RP_set_root_c(void* ptr, uint64_t i){
 }
 void* RP_get_root(uint64_t i){
 	if(UNLIKELY(initialized==false)){
-		RP_init("no_explicit_init", 16*1024*1024*1024ULL);
+		RP_init("no_explicit_init");
 	}
 	return base_md->get_root(i);
 }
