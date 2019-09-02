@@ -63,7 +63,7 @@ void RegionManager::__map_persistent_region(){
 	assert(result != -1);
 
 	void * addr =
-		mmap(0, FILESIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+		mmap(0, FILESIZE, PROT_READ | PROT_WRITE, MAP_SHARED_VALIDATE | MAP_SYNC, fd, 0);
 	assert(addr != MAP_FAILED);
 
 	base_addr = (char*) addr;
@@ -98,12 +98,15 @@ void RegionManager::__remap_persistent_region(){
 	assert (offt == 0);
 
 	void * addr =
-		mmap(0, FILESIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+		mmap(0, FILESIZE, PROT_READ | PROT_WRITE, MAP_SHARED_VALIDATE | MAP_SYNC, fd, 0);
 	assert(addr != MAP_FAILED);
 
 	base_addr = (char*) addr;
 	curr_addr_ptr = (atomic_pptr<char>*)base_addr;
-	assert(*(uint64_t*)((size_t)base_addr + 2*sizeof(atomic_pptr<char>)) == FILESIZE);
+	assert(*(uint64_t*)((size_t)base_addr + 2*sizeof(atomic_pptr<char>)) <= FILESIZE);
+	*(uint64_t*)((size_t)base_addr + 2*sizeof(atomic_pptr<char>)) = FILESIZE;
+	FLUSH((uint64_t*)((size_t)base_addr + 2*sizeof(atomic_pptr<char>)));
+	FLUSHFENCE;
 	DBG_PRINT("Addr: %p\n", addr);
 	DBG_PRINT("Base_addr: %p\n", base_addr);
 	DBG_PRINT("Curr_addr: %p\n", curr_addr_ptr->load());
@@ -182,7 +185,7 @@ void RegionManager::__close_persistent_region(){
 		 - (unsigned long) base_addr);
 	unsigned long remaining_space = 
 		 ((unsigned long) FILESIZE - space_used) / (1024 * 1024);
-	DBG_PRINT("Space Used(rounded down to MiB): %ld, Remaining(MiB): %ld\n", 
+	printf("Space Used(rounded down to MiB): %ld, Remaining(MiB): %ld\n", 
 			space_used / (1024 * 1024), remaining_space);
 	munmap((void*)base_addr, FILESIZE);
 	close(FD);
