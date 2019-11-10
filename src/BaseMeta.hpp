@@ -295,24 +295,20 @@ public:
 		assert(multiple && ((multiple & (multiple - 1)) == 0));
 		return (numToRound + multiple - 1) & ~(multiple - 1);
 	}
-	template<class T>
-	void* set_root(T* ptr, uint64_t i){
+	void* set_root(void* ptr, uint64_t i){
 		//this is sequential
 		assert(i<MAX_ROOTS);
 		void* res = nullptr;
 		if(roots[i]!=nullptr) 
 			res = static_cast<void*>(roots[i]);
 		roots[i] = ptr;
-		roots_filter_func[i] = [](const CrossPtr<char, SB_IDX>& cptr, GarbageCollection& gc){
-			// this new statement is intentionally designed to use transient allocator since it's offline
-			gc.mark_func(static_cast<T*>(cptr));
-		};
+
 		FLUSH(&roots[i]);
-		FLUSH(&roots_filter_func[i]);
 		FLUSHFENCE;
 		return res;
 	}
-	inline void* get_root(uint64_t i){
+	template<class T>
+	inline T* get_root(uint64_t i){
 		//this is sequential
 		assert(i<MAX_ROOTS);
 		ralloc::roots_filter_func[i] = [](const CrossPtr<char, SB_IDX>& cptr, GarbageCollection& gc){
