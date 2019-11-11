@@ -86,7 +86,6 @@ namespace ralloc{
 	extern bool initialized;
 	extern BaseMeta* base_md;
 	extern void public_flush_cache();
-	//GC
 };
 
 template<class T, RegionIndex idx>
@@ -273,7 +272,6 @@ public:
 
 	RP_PERSIST ProcHeap heaps[MAX_SZ_IDX];
 	RP_PERSIST CrossPtr<char, SB_IDX> roots[MAX_ROOTS];
-	RP_PERSIST std::function<void(const CrossPtr<char, SB_IDX>&, GarbageCollection&)> roots_filter_func[MAX_ROOTS];
 	friend class GarbageCollection;
 	BaseMeta() noexcept;
 	~BaseMeta(){
