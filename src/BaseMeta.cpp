@@ -148,7 +148,7 @@ bool BaseMeta::is_dirty(){
 		return false;
 	case EBUSY:
 	case EAGAIN:
-		return true;
+		return false;
 	case EINVAL:
 		pthread_mutex_destroy(&dirty_mtx);
 		pthread_mutex_init(&dirty_mtx, &dirty_attr);
@@ -724,7 +724,8 @@ void GarbageCollection::operator() () {
 				// false positive shouldn't enter here
 				if(curr_desc->heap->sc_idx == 0) {
 					// large sb that's in use
-					assert((*curr_marked_blk) == curr_sb);
+					// assert((*curr_marked_blk) == curr_sb); //allow large sb
+					// to be pointed at in the middle
 					assert(curr_desc->maxcount == 1);
 					anchor.state = SB_FULL; // set it as full
 				} 

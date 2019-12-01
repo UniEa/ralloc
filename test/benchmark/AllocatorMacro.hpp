@@ -54,7 +54,7 @@ volatile static int init_count = 0;
   #define MAKALU_FILESIZE (5*1024*1024*1024ULL + 24)
   inline void* pm_malloc(size_t s) { return MAK_malloc(s); }
   inline void pm_free(void* p) { MAK_free(p);}
-  #define HEAPFILE "/mnt/pmem/gc_heap_wcai6"
+  #define HEAPFILE "/dev/shm/gc_heap_wcai6"
 
   char *base_addr = NULL;
   static char *curr_addr = NULL;
@@ -71,7 +71,7 @@ volatile static int init_count = 0;
       assert(result != -1);
 
       void * addr =
-          mmap(0, MAKALU_FILESIZE, PROT_READ | PROT_WRITE, 0x80003/*MAP_SHARED_VALIDATE | MAP_SYNC*/, fd, 0);
+          mmap(0, MAKALU_FILESIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
       assert(addr != MAP_FAILED);
 
       *((intptr_t*)addr) = (intptr_t) addr;
@@ -119,7 +119,7 @@ volatile static int init_count = 0;
 
   // No longer support PMDK since it's too slow
   #include <libpmemobj.h>
-  #define HEAPFILE "/mnt/pmem/pmdk_heap_wcai6"
+  #define HEAPFILE "/dev/shm/pmdk_heap_wcai6"
   #define PMDK_FILESIZE (5*1024*1024*1024ULL + 24)
   thread_local PMEMoid temp_ptr;
   PMEMobjpool* pop = nullptr;
