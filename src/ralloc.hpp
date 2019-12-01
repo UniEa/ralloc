@@ -15,8 +15,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef _PMMALLOC_HPP_
-#define _PMMALLOC_HPP_
+#ifndef _RALLOC_HPP_
+#define _RALLOC_HPP_
 
 #include <stddef.h>
 #include <stdint.h>
@@ -24,17 +24,15 @@
 #ifdef __cplusplus
 extern "C" int RP_init(const char* _id, uint64_t size = 5*1024*1024*1024ULL);
 #include "BaseMeta.hpp"
-namespace rpmalloc{
+namespace ralloc{
 	extern bool initialized;
 	/* persistent metadata and their layout */
 	extern BaseMeta* base_md;
 };
 template<class T>
-void* RP_set_root(T* ptr, uint64_t i){
-	if(rpmalloc::initialized==false){
-		RP_init("no_explicit_init");
-	}
-	return rpmalloc::base_md->set_root(ptr,i);
+T* RP_get_root(uint64_t i){
+	assert(ralloc::initialized);
+	return ralloc::base_md->get_root<T>(i);
 }
 extern "C"{
 #else
@@ -61,7 +59,7 @@ int RP_region_range(int idx, void** start_addr, void** end_addr);
 
 #define RP_pthread_create(thd, attr, f, arg) pm_thread_create(thd, attr, f, arg)
 /*
- ************class rpmalloc************
+ ************class ralloc************
  * This is a persistent lock-free allocator based on LRMalloc.
  *
  * Function:
@@ -101,4 +99,4 @@ int RP_region_range(int idx, void** start_addr, void** end_addr);
  *
  */
 
-#endif /* _PMMALLOC_HPP_ */
+#endif /* _RALLOC_HPP_ */

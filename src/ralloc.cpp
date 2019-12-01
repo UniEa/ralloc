@@ -15,7 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#include "rpmalloc.hpp"
+#include "ralloc.hpp"
 
 #include <string>
 #include <atomic>
@@ -28,13 +28,13 @@
 
 using namespace std;
 
-namespace rpmalloc{
+namespace ralloc{
 	bool initialized = false;
 	/* persistent metadata and their layout */
 	BaseMeta* base_md;
 	Regions* _rgs;
 };
-using namespace rpmalloc;
+using namespace ralloc;
 extern void public_flush_cache();
 
 /* 
@@ -97,7 +97,10 @@ void RP_free(void* ptr){
 	base_md->do_free(ptr);
 }
 
-void* RP_set_root_c(void* ptr, uint64_t i){
+void* RP_set_root(void* ptr, uint64_t i){
+	if(ralloc::initialized==false){
+		RP_init("no_explicit_init");
+	}
 	return base_md->set_root(ptr,i);
 }
 void* RP_get_root(uint64_t i){
